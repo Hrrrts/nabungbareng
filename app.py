@@ -1,25 +1,34 @@
-from flask import Flask, render_template, request, redirect
-import sqlite3
+import os
 import datetime
+import psycopg2
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
+# Mengambil kunci database dari pengaturan Vercel
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
 def init_db():
-    conn = sqlite3.connect('nabung.db')
+    if not DATABASE_URL:
+        return
+    conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
-    c.execute('CREATE TABLE IF NOT EXISTS tabungan (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT, jumlah INTEGER, tipe TEXT, tanggal TEXT)')
+    c.execute('CREATE TABLE IF NOT EXISTS tabungan (id SERIAL PRIMARY KEY, nama VARCHAR(50), jumlah INTEGER, tipe VARCHAR(50), tanggal VARCHAR(50))')
     conn.commit()
     conn.close()
 
 @app.route('/')
 def index():
-    init_db() # Memastikan database otomatis terbuat
-    conn = sqlite3.connect('nabung.db')
+    if not DATABASE_URL:
+        return "ERROR: DATABASE_URL belum diatur di menu Environment Variables Vercel!"
+    init_db()
+    conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
     c.execute('SELECT * FROM tabungan ORDER BY id DESC')
     data = c.fetchall()
     c.execute('SELECT SUM(jumlah) FROM tabungan')
-    total = c.fetchone()[0] or 0
+    total_tuple = c.fetchone()
+    total = total_tuple[0] if total_tuple[0] else 0
     conn.close()
     return render_template('index.html', data=data, total=total)
 
@@ -30,12 +39,11 @@ def tambah():
     tipe = request.form['tipe']
     tanggal = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     
-    conn = sqlite3.connect('nabung.db')
+    conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
-    c.execute('INSERT INTO tabungan (nama, jumlah, tipe, tanggal) VALUES (?, ?, ?, ?)', (nama, jumlah, tipe, tanggal))
+    c.execute('INSERT INTO tabungan (nama, jumlah, tipe, tanggal) VALUES (%s, %s, %s, %s)', (nama, jumlah, tipe, tanggal))
     conn.commit()
     conn.close()
     return redirect('/')
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+# Vercel butuh variabel 'app' terekspos, jadi ini cukup.
