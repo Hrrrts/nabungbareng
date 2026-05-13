@@ -4,63 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nabung Bareng</title>
+    <!-- Bootstrap & Google Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 untuk Pop-up -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding-bottom: 30px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .progress {
+            height: 20px;
+            border-radius: 10px;
+            background-color: #e9ecef;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #36d1dc 0%, #5b86e5 100%);
+            font-weight: bold;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            border: none;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-4" style="max-width: 500px;">
-        <h3 class="text-center mb-4">Aplikasi Nabung Bareng 💸</h3>
+<body>
+    <div class="container mt-4" style="max-width: 550px;">
+        <h3 class="text-center mb-4" style="color: #2c3e50; font-weight: 700;">Tabungan Kita 💸</h3>
         
-        <div class="card shadow-sm mb-4 border-0">
-            <div class="card-body text-center bg-white rounded">
-                <h6 class="text-muted">Total Terkumpul:</h6>
-                <h2 class="text-success mb-0">Rp {{ "{:,.0f}".format(total).replace(',', '.') }}</h2>
+        <!-- Target & Progress Card -->
+        <div class="card mb-4 border-0">
+            <div class="card-body text-center bg-white">
+                <p class="text-muted mb-1" style="font-size: 0.9rem;">Total Terkumpul:</p>
+                <h1 class="text-success fw-bold mb-3">Rp {{ "{:,.0f}".format(total).replace(',', '.') }}</h1>
+                
+                <div class="d-flex justify-content-between mb-1" style="font-size: 0.8rem;">
+                    <span class="fw-bold text-muted">Progres Target</span>
+                    <span class="fw-bold text-primary">Rp {{ "{:,.0f}".format(target).replace(',', '.') }}</span>
+                </div>
+                <div class="progress mb-2">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ persentase }}%;" aria-valuenow="{{ persentase }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ "{:.1f}".format(persentase) }}%
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4 border-0">
+        <!-- Form Card -->
+        <div class="card mb-4 border-0">
             <div class="card-body">
-                <form action="/tambah" method="POST">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Siapa yang nabung?</label>
-                        <select name="nama" class="form-select" required>
-                            <option value="Ikhsan">Ikhsan</option>
-                            <option value="Febri">Febri</option>
-                        </select>
+                <form action="/tambah" method="POST" id="formNabung">
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label text-muted small fw-bold">Siapa yang nabung?</label>
+                            <select name="nama" class="form-select bg-light" required>
+                                <option value="Ikhsan">Ikhsan</option>
+                                <option value="Febri">Febri</option>
+                            </select>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label text-muted small fw-bold">Tipe Tabungan</label>
+                            <select name="tipe" class="form-select bg-light">
+                                <option value="Harian">Harian</option>
+                                <option value="Mingguan">Mingguan</option>
+                                <option value="Bulanan">Bulanan</option>
+                            </select>
+                        </div>
                     </div>
+                    
                     <div class="mb-3">
-                        <label class="form-label text-muted small">Jumlah (Rp)</label>
-                        <input type="number" name="jumlah" class="form-control" placeholder="Contoh: 15000" required>
+                        <label class="form-label text-muted small fw-bold">Jumlah (Rp)</label>
+                        <input type="number" name="jumlah" class="form-control bg-light" placeholder="Contoh: 15000" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Tipe Tabungan</label>
-                        <select name="tipe" class="form-select">
-                            <option value="Harian">Harian</option>
-                            <option value="Mingguan">Mingguan</option>
-                            <option value="Bulanan">Bulanan</option>
-                        </select>
+
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold">Catatan / No. Ref (Opsional)</label>
+                        <input type="text" name="catatan" class="form-control bg-light" placeholder="Misal: TF BCA / Sisa jajan">
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 rounded-pill">Catat Tabungan</button>
+
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">Simpan Tabungan</button>
                 </form>
             </div>
         </div>
 
-        <div class="card shadow-sm border-0">
+        <!-- History Card -->
+        <div class="card border-0">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0 text-center" style="font-size: 0.9rem;">
+                    <table class="table table-hover mb-0" style="font-size: 0.85rem;">
                         <thead class="table-light">
                             <tr>
-                                <th>Tanggal</th>
-                                <th>Nama</th>
-                                <th>Jumlah</th>
+                                <th class="ps-3">Detail</th>
+                                <th class="text-end pe-3">Jumlah</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for row in data %}
                             <tr>
-                                <td class="text-muted">{{ row[4] }}</td>
-                                <td><strong>{{ row[1] }}</strong><br><small class="text-muted">{{ row[3] }}</small></td>
-                                <td class="text-success fw-bold">Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
+                                <td class="ps-3">
+                                    <strong style="color: #2c3e50;">{{ row[1] }}</strong> <span class="badge bg-light text-dark border">{{ row[3] }}</span><br>
+                                    <small class="text-muted">{{ row[4] }}</small><br>
+                                    {% if row[5] and row[5] != '-' %}
+                                    <small class="text-info fst-italic">✎ {{ row[5] }}</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-3 align-middle text-success fw-bold">
+                                    + Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -69,5 +131,33 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Animasi Loading saat form disubmit
+        document.getElementById('formNabung').addEventListener('submit', function(e) {
+            Swal.fire({
+                title: 'Menyimpan Data...',
+                text: 'Sebentar ya, lagi dicatat di buku tabungan!',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+        });
+
+        // Cek apakah baru saja sukses simpan data
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('status') === 'sukses') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Uang tabungan sukses dicatat!',
+                confirmButtonColor: '#4776E6'
+            }).then(() => {
+                // Bersihkan URL dari ?status=sukses biar popup ga muncul terus kalau di-refresh
+                window.history.replaceState({}, document.title, window.location.pathname);
+            });
+        }
+    </script>
 </body>
 </html>
