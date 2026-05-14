@@ -8,111 +8,116 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; color: #333; }
-        .main-title { color: #2c3e50; font-weight: 700; letter-spacing: 1px; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); color: #333; min-height: 100vh; }
+        .main-title { color: #1a365d; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
         
-        /* Kartu Summary (Tengah) */
-        .summary-card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden; }
-        .summary-header { background: #0f5298; color: white; font-weight: 600; padding: 15px; text-align: center; }
-        .summary-body { padding: 20px 25px; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; padding: 12px 0; }
+        .summary-card { background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid rgba(0,0,0,0.02); }
+        .summary-header { background: linear-gradient(90deg, #0f5298 0%, #1e73be 100%); color: white; font-weight: 600; padding: 18px; text-align: center; letter-spacing: 1px;}
+        .summary-body { padding: 25px 30px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding: 12px 0; }
         .flex-between:last-child { border-bottom: none; }
         .text-blue-amount { color: #0f5298; font-weight: 700; }
-        .text-red { color: #e74c3c; font-weight: 700; }
         
-        /* Kartu Input Form */
-        .form-card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); padding: 25px; margin-bottom: 30px; }
-        .btn-primary-custom { background-color: #0f5298; border: none; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 500; transition: all 0.3s; }
-        .btn-primary-custom:hover { background-color: #0b3d73; }
+        .progress-container { background: #e2e8f0; border-radius: 20px; height: 18px; margin-top: 25px; overflow: hidden; }
+        .progress-bar-custom { background: linear-gradient(90deg, #38b2ac 0%, #3182ce 100%); height: 100%; transition: width 1s ease-in-out; }
         
-        /* Tabel Custom */
-        .table-container { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden; }
-        .table-title { background: #0f5298; color: white; padding: 15px; text-align: center; font-weight: 600; margin: 0; }
-        .table { margin-bottom: 0; }
-        .table th { background-color: #f8f9fa; color: #495057; font-weight: 600; border-bottom: 2px solid #e9ecef; text-align: center; }
-        .table td { vertical-align: middle; text-align: center; padding: 12px; }
+        .form-card { background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 30px; margin-bottom: 40px; }
+        .btn-primary-custom { background: linear-gradient(90deg, #0f5298 0%, #1e73be 100%); border: none; color: white; padding: 12px 20px; border-radius: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-primary-custom:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .table-container { background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; }
+        .table-title { background: #f8fafc; color: #1a365d; padding: 15px; text-align: center; font-weight: 700; margin: 0; border-bottom: 2px solid #e2e8f0; }
+        .table th { background-color: #f8fafc; color: #64748b; font-weight: 600; text-align: center; font-size: 0.9rem; text-transform: uppercase; }
+        .table td { vertical-align: middle; text-align: center; padding: 15px 10px; }
     </style>
 </head>
 <body class="py-5">
     <div class="container" style="max-width: 1000px;">
         
-        <!-- Judul di Tengah -->
-        <h2 class="text-center main-title mb-5">Tabungan Bersama</h2>
+        <h2 class="text-center main-title mb-5">💍 Tabungan Bersama</h2>
         
-        <!-- Summary Section (Flexbox Centered) -->
+        <!-- Summary Section -->
         <div class="d-flex justify-content-center mb-5">
             <div class="summary-card w-100" style="max-width: 550px;">
-                <div class="summary-header fs-5">Ringkasan Target</div>
+                <div class="summary-header fs-5">🎯 Ringkasan Target</div>
                 <div class="summary-body">
                     <div class="flex-between">
                         <span class="fw-medium text-secondary">Target Dana</span>
                         <span class="fs-5 text-blue-amount">Rp {{ "{:,.0f}".format(target).replace(',', '.') }}</span>
                     </div>
                     <div class="flex-between">
-                        <span class="fw-medium text-secondary">Terkumpul Ikhsan</span>
+                        <span class="fw-medium text-secondary">🤵 Terkumpul Ikhsan</span>
                         <span class="text-blue-amount">Rp {{ "{:,.0f}".format(total_ikhsan).replace(',', '.') }}</span>
                     </div>
                     <div class="flex-between">
-                        <span class="fw-medium text-secondary">Terkumpul Febri</span>
+                        <span class="fw-medium text-secondary">👰 Terkumpul Febri</span>
                         <span class="text-blue-amount">Rp {{ "{:,.0f}".format(total_febri).replace(',', '.') }}</span>
                     </div>
-                    <div class="flex-between bg-light rounded px-3 py-2 mt-3">
-                        <span class="fw-bold text-dark">Total Terkumpul</span>
-                        <span class="fs-5 text-success fw-bold">Rp {{ "{:,.0f}".format(total_semua).replace(',', '.') }}</span>
+                    
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="progress-bar-custom" style="width: {{ persentase }}%;"></div>
                     </div>
-                    <div class="flex-between mt-2 pt-3" style="border-top: 2px dashed #eee;">
-                        <span class="fw-medium text-secondary">Sisa Dana Dibutuhkan</span>
-                        <span class="fs-5 text-red">Rp {{ "{:,.0f}".format(sisa_dana).replace(',', '.') }}</span>
+                    <div class="text-center mt-1 mb-3 text-muted" style="font-size: 0.8rem; font-weight: 600;">
+                        Progres: {{ "{:.1f}".format(persentase) }}%
+                    </div>
+
+                    <div class="flex-between bg-light rounded px-4 py-3 mt-3 shadow-sm border">
+                        <span class="fw-bold text-dark">Total Terkumpul</span>
+                        <span class="fs-4 text-success fw-bold">Rp {{ "{:,.0f}".format(total_semua).replace(',', '.') }}</span>
+                    </div>
+                    <div class="flex-between mt-3 pt-3">
+                        <span class="fw-medium text-secondary">Sisa Dibutuhkan</span>
+                        <span class="fs-5 text-danger fw-bold">Rp {{ "{:,.0f}".format(sisa_dana).replace(',', '.') }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Form Section (Flexbox Row Layout) -->
+        <!-- Form Section -->
         <div class="form-card">
-            <h5 class="text-center text-secondary mb-4 fw-bold">Catat Tabungan Baru</h5>
+            <h5 class="text-center text-secondary mb-4 fw-bold">📝 Catat Tabungan Baru</h5>
             <form action="/tambah" method="POST" id="formNabung" enctype="multipart/form-data">
-                <div class="d-flex flex-column flex-lg-row gap-3 justify-content-center align-items-center">
-                    <select name="nama" class="form-select flex-grow-1" required>
-                        <option value="" disabled selected>- Pilih Nama -</option>
-                        <option value="Ikhsan">Ikhsan</option>
-                        <option value="Febri">Febri</option>
-                    </select>
-                    
-                    <input type="number" name="jumlah" class="form-control flex-grow-1" placeholder="Nominal (Cth: 50000)" required>
-                    
-                    <select name="tipe" class="form-select flex-grow-1">
-                        <option value="Tabungan bersama">Bersama</option>
-                        <option value="Harian">Harian</option>
-                    </select>
-                    
-                    <input type="file" name="foto" class="form-control flex-grow-1" accept="image/*" title="Upload Bukti">
-                    
-                    <button type="submit" class="btn btn-primary-custom flex-grow-1 w-100">Simpan</button>
+                <div class="row g-3 justify-content-center align-items-center">
+                    <div class="col-md-2">
+                        <select name="nama" class="form-select bg-light" required>
+                            <option value="" disabled selected>- Nama -</option>
+                            <option value="Ikhsan">Ikhsan</option>
+                            <option value="Febri">Febri</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <!-- Input yang kelihatan (pakai format titik) -->
+                        <input type="text" id="jumlah_tampil" class="form-control bg-light" placeholder="Nominal (Cth: 50.000)" required>
+                        <!-- Input asli yang dikirim ke server (tanpa titik) -->
+                        <input type="hidden" name="jumlah_asli" id="jumlah_asli" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="file" name="foto" class="form-control bg-light" accept="image/*" title="Upload Bukti">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="password" name="pin" class="form-control border-primary" placeholder="PIN Rahasia" required autocomplete="off">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary-custom w-100">SIMPAN</button>
+                    </div>
                 </div>
             </form>
         </div>
 
-        <!-- Tables Section (Flexbox 2 Columns) -->
+        <!-- Tables Section -->
         <div class="d-flex flex-column flex-lg-row gap-4 mb-5">
-            
             <!-- Tabel Ikhsan -->
             <div class="table-container flex-fill w-100">
-                <h5 class="table-title">Ikhsan</h5>
+                <h5 class="table-title">👦 Ikhsan</h5>
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Tanggal</th>
-                                <th>Nominal</th>
-                                <th>Bukti</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Waktu</th><th>Nominal</th><th>Bukti</th></tr></thead>
                         <tbody>
                             {% for row in data_ikhsan %}
                             <tr>
-                                <td class="text-muted small">{{ row[4] }}</td>
-                                <td class="text-start ps-4 fw-medium text-success">Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
+                                <td class="text-muted" style="font-size: 0.85rem;">{{ row[4] }}</td>
+                                <td class="text-center fw-bold text-success">Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
                                 <td>
                                     {% if row|length > 6 and row[6] %}
                                     <a href="{{ row[6] }}" target="_blank" class="badge bg-primary text-decoration-none py-2 px-3">Lihat</a>
@@ -122,9 +127,7 @@
                                 </td>
                             </tr>
                             {% else %}
-                            <tr>
-                                <td colspan="3" class="text-center text-muted fst-italic py-4">Belum ada data tabungan</td>
-                            </tr>
+                            <tr><td colspan="3" class="text-center text-muted fst-italic py-4">Belum ada data tabungan</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -133,21 +136,15 @@
 
             <!-- Tabel Febri -->
             <div class="table-container flex-fill w-100">
-                <h5 class="table-title">Febri</h5>
+                <h5 class="table-title">👧 Febri</h5>
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Tanggal</th>
-                                <th>Nominal</th>
-                                <th>Bukti</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Waktu</th><th>Nominal</th><th>Bukti</th></tr></thead>
                         <tbody>
                             {% for row in data_febri %}
                             <tr>
-                                <td class="text-muted small">{{ row[4] }}</td>
-                                <td class="text-start ps-4 fw-medium text-success">Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
+                                <td class="text-muted" style="font-size: 0.85rem;">{{ row[4] }}</td>
+                                <td class="text-center fw-bold text-success">Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
                                 <td>
                                     {% if row|length > 6 and row[6] %}
                                     <a href="{{ row[6] }}" target="_blank" class="badge bg-primary text-decoration-none py-2 px-3">Lihat</a>
@@ -157,30 +154,57 @@
                                 </td>
                             </tr>
                             {% else %}
-                            <tr>
-                                <td colspan="3" class="text-center text-muted fst-italic py-4">Belum ada data tabungan</td>
-                            </tr>
+                            <tr><td colspan="3" class="text-center text-muted fst-italic py-4">Belum ada data tabungan</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
+
+        <!-- Tombol Menuju Halaman Reset -->
+        <div class="text-center mt-4 mb-5">
+            <a href="/halaman_reset" class="text-muted text-decoration-none" style="font-size: 0.8rem; border-bottom: 1px dashed #ccc;">Pengaturan Bahaya (Reset Data)</a>
+        </div>
+
     </div>
 
     <script>
+        // Script untuk format angka ribuan otomatis (10.000)
+        const inputTampil = document.getElementById('jumlah_tampil');
+        const inputAsli = document.getElementById('jumlah_asli');
+        
+        inputTampil.addEventListener('input', function(e) {
+            // Hapus karakter selain angka
+            let val = this.value.replace(/[^0-9]/g, '');
+            inputAsli.value = val; // Simpan angka murni untuk dikirim ke backend
+            
+            if(val) {
+                // Format dengan titik
+                this.value = parseInt(val).toLocaleString('id-ID');
+            } else {
+                this.value = '';
+            }
+        });
+
         document.getElementById('formNabung').addEventListener('submit', function(e) {
             Swal.fire({
-                title: 'Menyimpan...',
+                title: 'Mengecek PIN & Menyimpan...',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading() }
             });
         });
 
+        // Tangkap pesan sukses atau error PIN dari URL
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('status') === 'sukses') {
             Swal.fire({ icon: 'success', title: 'Berhasil Disimpan!', timer: 1500, showConfirmButton: false })
+            .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
+        } else if (urlParams.get('status') === 'pin_salah') {
+            Swal.fire({ icon: 'error', title: 'Akses Ditolak!', text: 'PIN Rahasia Salah!', confirmButtonColor: '#d33' })
+            .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
+        } else if (urlParams.get('status') === 'reset_sukses') {
+            Swal.fire({ icon: 'success', title: 'Database Bersih!', text: 'Semua data telah direset.', timer: 2000, showConfirmButton: false })
             .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
         }
     </script>

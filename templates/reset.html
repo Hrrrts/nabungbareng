@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Database</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8d7da; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .danger-card { background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(220,53,69,0.2); padding: 40px; max-width: 400px; text-align: center; border-top: 5px solid #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="danger-card">
+        <h3 class="text-danger fw-bold mb-3">⚠️ ZONA BAHAYA</h3>
+        <p class="text-muted mb-4">Fitur ini akan menghapus <b>SELURUH</b> data tabungan Ikhsan dan Febri secara permanen.</p>
+        
+        <form action="/hapus_semua" method="POST" id="formReset">
+            <div class="mb-4">
+                <input type="password" name="pin" class="form-control text-center" placeholder="Masukkan PIN Rahasia" required autocomplete="off">
+            </div>
+            <button type="submit" class="btn btn-danger w-100 fw-bold mb-3 py-2">HAPUS SEMUA DATA</button>
+            <a href="/" class="text-decoration-none text-secondary">Batalkan & Kembali</a>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('formReset').addEventListener('submit', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Yakin 100%?',
+                text: "Tidak bisa dibatalkan! Uang di bank aman, tapi catatannya di sini hilang semua lho!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Musnahkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.submit();
+                }
+            });
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('status') === 'pin_salah') {
+            Swal.fire({ icon: 'error', title: 'Gagal Reset!', text: 'PIN Rahasia Salah!', confirmButtonColor: '#d33' })
+            .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
+        }
+    </script>
+</body>
+</html>
