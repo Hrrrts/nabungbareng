@@ -9,7 +9,15 @@ app = Flask(__name__)
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 TARGET_TABUNGAN = 100000000
-PIN_RAHASIA = "1234"  # <-- GANTI PIN KALIAN DI SINI
+
+# Pengaturan PIN Khusus
+PIN_AKUN = {
+    "Ikhsan": "080907",
+    "Febri": "756477"
+}
+
+# PIN Khusus untuk halaman Master Reset
+PIN_MASTER = "000000" # Ganti kalau lu mau, ini buat lu akses hapus semua data
 
 cloudinary.config(
     cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
@@ -63,16 +71,20 @@ def index():
 
 @app.route('/tambah', methods=['POST'])
 def tambah():
-    pin_input = request.form.get('pin')
-    if pin_input != PIN_RAHASIA:
+    nama = request.form.get('nama')
+    pin_input = request.form.get('pin_rahasia')
+    
+    # Validasi PIN per Akun
+    if PIN_AKUN.get(nama) != pin_input:
         return redirect('/?status=pin_salah')
 
-    nama = request.form['nama']
-    jumlah = int(request.form['jumlah_asli']) # Ambil angka murni tanpa titik
+    try:
+        jumlah = int(request.form['jumlah_asli'])
+    except:
+        return redirect('/?status=error')
     
-    # Waktu pakai WIB (+7 jam)
     tz = datetime.timezone(datetime.timedelta(hours=7))
-    tanggal = datetime.datetime.now(tz).strftime("%d %b %Y - %H:%M")
+    tanggal = datetime.datetime.now(tz).strftime("%d %b %Y - %H:%M WIB")
     
     foto_url = None
     if 'foto' in request.files:
@@ -86,7 +98,6 @@ def tambah():
 
     conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
-    # Tipe dan catatan diisi default '-' karena sudah dihapus dari form
     if foto_url:
         c.execute('INSERT INTO tabungan (nama, jumlah, tipe, tanggal, catatan, foto) VALUES (%s, %s, %s, %s, %s, %s)', (nama, jumlah, '-', tanggal, '-', foto_url))
     else:
@@ -103,7 +114,7 @@ def halaman_reset():
 @app.route('/hapus_semua', methods=['POST'])
 def hapus_semua():
     pin_input = request.form.get('pin')
-    if pin_input != PIN_RAHASIA:
+    if pin_input != PIN_MASTER:
         return redirect('/halaman_reset?status=pin_salah')
     
     conn = psycopg2.connect(DATABASE_URL)

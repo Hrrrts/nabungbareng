@@ -5,206 +5,292 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabungan Bersama</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); color: #333; min-height: 100vh; }
-        .main-title { color: #1a365d; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; color: #2c3e50; padding-bottom: 50px; }
+        .main-title { font-weight: 700; letter-spacing: 1px; color: #1a252f; text-transform: uppercase; margin-top: 40px; margin-bottom: 30px;}
         
-        .summary-card { background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid rgba(0,0,0,0.02); }
-        .summary-header { background: linear-gradient(90deg, #0f5298 0%, #1e73be 100%); color: white; font-weight: 600; padding: 18px; text-align: center; letter-spacing: 1px;}
-        .summary-body { padding: 25px 30px; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding: 12px 0; }
+        .card-custom { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eef2f5; overflow: hidden;}
+        .card-header-custom { background: #1a252f; color: white; padding: 15px 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.9rem;}
+        
+        .flex-between { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f4f8; padding: 12px 0; }
         .flex-between:last-child { border-bottom: none; }
-        .text-blue-amount { color: #0f5298; font-weight: 700; }
+        .val-text { font-weight: 700; color: #2980b9; }
         
-        .progress-container { background: #e2e8f0; border-radius: 20px; height: 18px; margin-top: 25px; overflow: hidden; }
-        .progress-bar-custom { background: linear-gradient(90deg, #38b2ac 0%, #3182ce 100%); height: 100%; transition: width 1s ease-in-out; }
+        .progress-wrap { background: #e0e6ed; border-radius: 10px; height: 10px; margin-top: 20px; overflow: hidden; }
+        .progress-fill { background: #2980b9; height: 100%; transition: width 1s ease; }
         
-        .form-card { background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 30px; margin-bottom: 40px; }
-        .btn-primary-custom { background: linear-gradient(90deg, #0f5298 0%, #1e73be 100%); border: none; color: white; padding: 12px 20px; border-radius: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-primary-custom:hover { opacity: 0.9; transform: translateY(-1px); }
-        
-        .table-container { background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; }
-        .table-title { background: #f8fafc; color: #1a365d; padding: 15px; text-align: center; font-weight: 700; margin: 0; border-bottom: 2px solid #e2e8f0; }
-        .table th { background-color: #f8fafc; color: #64748b; font-weight: 600; text-align: center; font-size: 0.9rem; text-transform: uppercase; }
-        .table td { vertical-align: middle; text-align: center; padding: 15px 10px; }
+        .btn-action { background: #2980b9; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; letter-spacing: 0.5px; transition: all 0.2s; box-shadow: 0 4px 6px rgba(41, 128, 185, 0.2); }
+        .btn-action:hover { background: #2471a3; transform: translateY(-1px); }
+
+        .table th { background: #f8f9fa; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase; font-weight: 600; }
+        .table td { vertical-align: middle; font-size: 0.9rem; }
     </style>
 </head>
-<body class="py-5">
-    <div class="container" style="max-width: 1000px;">
+<body>
+    <div class="container" style="max-width: 900px;">
+        <h3 class="text-center main-title">Tabungan Bersama</h3>
         
-        <h2 class="text-center main-title mb-5">💍 Tabungan Bersama</h2>
-        
-        <!-- Summary Section -->
-        <div class="d-flex justify-content-center mb-5">
-            <div class="summary-card w-100" style="max-width: 550px;">
-                <div class="summary-header fs-5">🎯 Ringkasan Target</div>
-                <div class="summary-body">
-                    <div class="flex-between">
-                        <span class="fw-medium text-secondary">Target Dana</span>
-                        <span class="fs-5 text-blue-amount">Rp {{ "{:,.0f}".format(target).replace(',', '.') }}</span>
-                    </div>
-                    <div class="flex-between">
-                        <span class="fw-medium text-secondary">🤵 Terkumpul Ikhsan</span>
-                        <span class="text-blue-amount">Rp {{ "{:,.0f}".format(total_ikhsan).replace(',', '.') }}</span>
-                    </div>
-                    <div class="flex-between">
-                        <span class="fw-medium text-secondary">👰 Terkumpul Febri</span>
-                        <span class="text-blue-amount">Rp {{ "{:,.0f}".format(total_febri).replace(',', '.') }}</span>
-                    </div>
-                    
-                    <!-- Progress Bar -->
-                    <div class="progress-container">
-                        <div class="progress-bar-custom" style="width: {{ persentase }}%;"></div>
-                    </div>
-                    <div class="text-center mt-1 mb-3 text-muted" style="font-size: 0.8rem; font-weight: 600;">
-                        Progres: {{ "{:.1f}".format(persentase) }}%
-                    </div>
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8">
+                <div class="card-custom">
+                    <div class="card-header-custom text-center">Ringkasan Target</div>
+                    <div class="p-4">
+                        <div class="flex-between">
+                            <span class="text-secondary" style="font-size: 0.9rem;">Target Dana</span>
+                            <span class="val-text">Rp {{ "{:,.0f}".format(target).replace(',', '.') }}</span>
+                        </div>
+                        <div class="flex-between">
+                            <span class="text-secondary" style="font-size: 0.9rem;">Terkumpul Ikhsan</span>
+                            <span class="val-text">Rp {{ "{:,.0f}".format(total_ikhsan).replace(',', '.') }}</span>
+                        </div>
+                        <div class="flex-between">
+                            <span class="text-secondary" style="font-size: 0.9rem;">Terkumpul Febri</span>
+                            <span class="val-text">Rp {{ "{:,.0f}".format(total_febri).replace(',', '.') }}</span>
+                        </div>
+                        
+                        <div class="progress-wrap">
+                            <div class="progress-fill" style="width: {{ persentase }}%;"></div>
+                        </div>
+                        <div class="text-end text-muted mt-1" style="font-size: 0.75rem;">Progres: {{ "{:.1f}".format(persentase) }}%</div>
 
-                    <div class="flex-between bg-light rounded px-4 py-3 mt-3 shadow-sm border">
-                        <span class="fw-bold text-dark">Total Terkumpul</span>
-                        <span class="fs-4 text-success fw-bold">Rp {{ "{:,.0f}".format(total_semua).replace(',', '.') }}</span>
-                    </div>
-                    <div class="flex-between mt-3 pt-3">
-                        <span class="fw-medium text-secondary">Sisa Dibutuhkan</span>
-                        <span class="fs-5 text-danger fw-bold">Rp {{ "{:,.0f}".format(sisa_dana).replace(',', '.') }}</span>
+                        <div class="flex-between bg-light rounded px-3 py-2 mt-3 border">
+                            <span class="fw-bold" style="font-size: 0.9rem;">Total Terkumpul</span>
+                            <span class="fw-bold text-success" style="font-size: 1.1rem;">Rp {{ "{:,.0f}".format(total_semua).replace(',', '.') }}</span>
+                        </div>
+                        <div class="flex-between mt-2">
+                            <span class="text-secondary" style="font-size: 0.9rem;">Sisa Dibutuhkan</span>
+                            <span class="fw-bold text-danger">Rp {{ "{:,.0f}".format(sisa_dana).replace(',', '.') }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Form Section -->
-        <div class="form-card">
-            <h5 class="text-center text-secondary mb-4 fw-bold">📝 Catat Tabungan Baru</h5>
-            <form action="/tambah" method="POST" id="formNabung" enctype="multipart/form-data">
-                <div class="row g-3 justify-content-center align-items-center">
-                    <div class="col-md-2">
-                        <select name="nama" class="form-select bg-light" required>
-                            <option value="" disabled selected>- Nama -</option>
-                            <option value="Ikhsan">Ikhsan</option>
-                            <option value="Febri">Febri</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <!-- Input yang kelihatan (pakai format titik) -->
-                        <input type="text" id="jumlah_tampil" class="form-control bg-light" placeholder="Nominal (Cth: 50.000)" required>
-                        <!-- Input asli yang dikirim ke server (tanpa titik) -->
-                        <input type="hidden" name="jumlah_asli" id="jumlah_asli" required>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="file" name="foto" class="form-control bg-light" accept="image/*" title="Upload Bukti">
-                    </div>
-                    <div class="col-md-2">
-                        <input type="password" name="pin" class="form-control border-primary" placeholder="PIN Rahasia" required autocomplete="off">
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary-custom w-100">SIMPAN</button>
-                    </div>
-                </div>
-            </form>
+        <div class="text-center mb-5">
+            <button type="button" class="btn-action w-100" style="max-width: 400px;" data-bs-toggle="modal" data-bs-target="#modalNabung">
+                + CATAT TABUNGAN BARU
+            </button>
         </div>
 
-        <!-- Tables Section -->
-        <div class="d-flex flex-column flex-lg-row gap-4 mb-5">
-            <!-- Tabel Ikhsan -->
-            <div class="table-container flex-fill w-100">
-                <h5 class="table-title">👦 Ikhsan</h5>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead><tr><th>Waktu</th><th>Nominal</th><th>Bukti</th></tr></thead>
-                        <tbody>
-                            {% for row in data_ikhsan %}
-                            <tr>
-                                <td class="text-muted" style="font-size: 0.85rem;">{{ row[4] }}</td>
-                                <td class="text-center fw-bold text-success">Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
-                                <td>
-                                    {% if row|length > 6 and row[6] %}
-                                    <a href="{{ row[6] }}" target="_blank" class="badge bg-primary text-decoration-none py-2 px-3">Lihat</a>
-                                    {% else %}
-                                    <span class="badge bg-light text-muted border">Tidak ada</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% else %}
-                            <tr><td colspan="3" class="text-center text-muted fst-italic py-4">Belum ada data tabungan</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card-custom">
+                    <div class="card-header-custom text-center">Ikhsan</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 text-center">
+                            <thead><tr><th>Waktu</th><th>Nominal</th><th>Bukti</th></tr></thead>
+                            <tbody>
+                                {% for row in data_ikhsan %}
+                                <tr>
+                                    <td class="text-muted" style="font-size: 0.75rem;">{{ row[4] }}</td>
+                                    <td class="fw-semibold text-success">Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
+                                    <td>
+                                        {% if row|length > 6 and row[6] %}
+                                        <a href="{{ row[6] }}" target="_blank" class="badge bg-secondary text-decoration-none">Lihat</a>
+                                        {% else %}
+                                        <span class="text-muted" style="font-size: 0.7rem;">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="3" class="text-muted fst-italic py-4" style="font-size: 0.8rem;">Belum ada data</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- Tabel Febri -->
-            <div class="table-container flex-fill w-100">
-                <h5 class="table-title">👧 Febri</h5>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead><tr><th>Waktu</th><th>Nominal</th><th>Bukti</th></tr></thead>
-                        <tbody>
-                            {% for row in data_febri %}
-                            <tr>
-                                <td class="text-muted" style="font-size: 0.85rem;">{{ row[4] }}</td>
-                                <td class="text-center fw-bold text-success">Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
-                                <td>
-                                    {% if row|length > 6 and row[6] %}
-                                    <a href="{{ row[6] }}" target="_blank" class="badge bg-primary text-decoration-none py-2 px-3">Lihat</a>
-                                    {% else %}
-                                    <span class="badge bg-light text-muted border">Tidak ada</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% else %}
-                            <tr><td colspan="3" class="text-center text-muted fst-italic py-4">Belum ada data tabungan</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <div class="col-md-6">
+                <div class="card-custom">
+                    <div class="card-header-custom text-center">Febri</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 text-center">
+                            <thead><tr><th>Waktu</th><th>Nominal</th><th>Bukti</th></tr></thead>
+                            <tbody>
+                                {% for row in data_febri %}
+                                <tr>
+                                    <td class="text-muted" style="font-size: 0.75rem;">{{ row[4] }}</td>
+                                    <td class="fw-semibold text-success">Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
+                                    <td>
+                                        {% if row|length > 6 and row[6] %}
+                                        <a href="{{ row[6] }}" target="_blank" class="badge bg-secondary text-decoration-none">Lihat</a>
+                                        {% else %}
+                                        <span class="text-muted" style="font-size: 0.7rem;">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="3" class="text-muted fst-italic py-4" style="font-size: 0.8rem;">Belum ada data</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Tombol Menuju Halaman Reset -->
-        <div class="text-center mt-4 mb-5">
-            <a href="/halaman_reset" class="text-muted text-decoration-none" style="font-size: 0.8rem; border-bottom: 1px dashed #ccc;">Pengaturan Bahaya (Reset Data)</a>
-        </div>
-
     </div>
 
+    <div class="modal fade" id="modalNabung" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold" style="font-size: 1rem; color: #1a252f;">Data Tabungan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formUtama" action="/tambah" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-semibold" style="font-size: 0.85rem;">Pilih Nama</label>
+                            <select id="inputNama" name="nama" class="form-select" required>
+                                <option value="" disabled selected>Pilih...</option>
+                                <option value="Ikhsan">Ikhsan</option>
+                                <option value="Febri">Febri</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-semibold" style="font-size: 0.85rem;">Nominal Input</label>
+                            <input type="text" id="jumlah_tampil" class="form-control" placeholder="Contoh: 50.000" required>
+                            <input type="hidden" name="jumlah_asli" id="jumlah_asli" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-semibold" style="font-size: 0.85rem;">Bukti Transfer (Opsional)</label>
+                            <input type="file" id="inputFoto" name="foto" class="form-control" accept="image/*">
+                            <small class="text-muted" style="font-size: 0.7rem;">Gambar otomatis dikompres agar upload cepat.</small>
+                        </div>
+                        
+                        <input type="hidden" name="pin_rahasia" id="pin_rahasia">
+                        
+                        <button type="button" id="btnLanjut" class="btn-action w-100">LANJUTKAN</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // Script untuk format angka ribuan otomatis (10.000)
+        // Format Angka Ribuan
         const inputTampil = document.getElementById('jumlah_tampil');
         const inputAsli = document.getElementById('jumlah_asli');
-        
         inputTampil.addEventListener('input', function(e) {
-            // Hapus karakter selain angka
             let val = this.value.replace(/[^0-9]/g, '');
-            inputAsli.value = val; // Simpan angka murni untuk dikirim ke backend
+            inputAsli.value = val;
+            if(val) this.value = parseInt(val).toLocaleString('id-ID');
+            else this.value = '';
+        });
+
+        // Fungsi Kompresi Gambar pakai Canvas (Biar upload gak lemot)
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800; // Maksimal lebar gambar
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > MAX_WIDTH) {
+                            height = height * (MAX_WIDTH / width);
+                            width = MAX_WIDTH;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        ctx.canvas.toBlob((blob) => {
+                            const newFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            resolve(newFile);
+                        }, 'image/jpeg', 0.6); // 0.6 adalah kualitas kompresi (lebih kecil ukurannya)
+                    }
+                }
+            });
+        }
+
+        // Logic Tombol Lanjut (Pop-up PIN)
+        document.getElementById('btnLanjut').addEventListener('click', async function() {
+            const nama = document.getElementById('inputNama').value;
+            const nominal = inputAsli.value;
             
-            if(val) {
-                // Format dengan titik
-                this.value = parseInt(val).toLocaleString('id-ID');
-            } else {
-                this.value = '';
+            if(!nama || !nominal) {
+                Swal.fire({icon: 'error', title: 'Data Belum Lengkap', text: 'Nama dan Nominal harus diisi!'});
+                return;
+            }
+
+            // Tutup Bootstrap Modal
+            var myModalEl = document.getElementById('modalNabung');
+            var modal = bootstrap.Modal.getInstance(myModalEl);
+            modal.hide();
+
+            // Minta PIN lewat SweetAlert
+            const { value: pinUser } = await Swal.fire({
+                title: 'Verifikasi Keamanan',
+                text: 'Masukkan PIN untuk ' + nama,
+                input: 'password',
+                inputPlaceholder: 'Masukkan 6 digit PIN',
+                showCancelButton: true,
+                confirmButtonColor: '#2980b9',
+                confirmButtonText: 'Verifikasi & Simpan',
+                cancelButtonText: 'Batal'
+            });
+
+            if (pinUser) {
+                document.getElementById('pin_rahasia').value = pinUser;
+                
+                // Animasi Loading & Countdown 15 Detik
+                let timerInterval;
+                Swal.fire({
+                    title: 'Menyimpan Data',
+                    html: 'Mohon tunggu maksimal <b></b> detik.',
+                    timer: 15000, // 15 detik batas waktu tampilan
+                    timerProgressBar: true,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector('b');
+                        timerInterval = setInterval(() => {
+                            timer.textContent = Math.ceil(Swal.getTimerLeft() / 1000);
+                        }, 100);
+                    },
+                    willClose: () => { clearInterval(timerInterval); }
+                });
+
+                // Proses Kompresi File Jika Ada
+                const fileInput = document.getElementById('inputFoto');
+                if (fileInput.files.length > 0) {
+                    const compressedFile = await compressImage(fileInput.files[0]);
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(compressedFile);
+                    fileInput.files = dataTransfer.files;
+                }
+
+                // Kirim form ke server
+                HTMLFormElement.prototype.submit.call(document.getElementById('formUtama'));
             }
         });
 
-        document.getElementById('formNabung').addEventListener('submit', function(e) {
-            Swal.fire({
-                title: 'Mengecek PIN & Menyimpan...',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading() }
-            });
-        });
-
-        // Tangkap pesan sukses atau error PIN dari URL
+        // Notifikasi URL Parameter
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('status') === 'sukses') {
-            Swal.fire({ icon: 'success', title: 'Berhasil Disimpan!', timer: 1500, showConfirmButton: false })
+            Swal.fire({ icon: 'success', title: 'Tersimpan!', timer: 1500, showConfirmButton: false })
             .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
         } else if (urlParams.get('status') === 'pin_salah') {
-            Swal.fire({ icon: 'error', title: 'Akses Ditolak!', text: 'PIN Rahasia Salah!', confirmButtonColor: '#d33' })
+            Swal.fire({ icon: 'error', title: 'Ditolak!', text: 'PIN yang dimasukkan salah.', confirmButtonColor: '#e74c3c' })
             .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
         } else if (urlParams.get('status') === 'reset_sukses') {
-            Swal.fire({ icon: 'success', title: 'Database Bersih!', text: 'Semua data telah direset.', timer: 2000, showConfirmButton: false })
+            Swal.fire({ icon: 'success', title: 'Database Bersih!', timer: 1500, showConfirmButton: false })
             .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
         }
     </script>
