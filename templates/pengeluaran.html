@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catatan Pengeluaran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fcfafb; color: #2c3e50; padding-bottom: 50px; }
+        .main-title { font-weight: 700; letter-spacing: 1px; color: #e74c3c; text-transform: uppercase; margin-top: 40px; margin-bottom: 30px;}
+        .card-custom { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #fce8e8; overflow: hidden;}
+        .card-header-custom { background: #e74c3c; color: white; padding: 15px 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.9rem;}
+        
+        .btn-action-danger { background: #e74c3c; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; transition: all 0.2s; }
+        .btn-action-danger:hover { background: #c0392b; color: white;}
+        .btn-outline-secondary-custom { border: 2px solid #95a5a6; color: #7f8c8d; padding: 10px 24px; border-radius: 8px; font-weight: 600; transition: all 0.2s; background: transparent;}
+        .btn-outline-secondary-custom:hover { background: #95a5a6; color: white; }
+        
+        .table th { background: #fdf2f2; color: #c0392b; font-size: 0.8rem; text-transform: uppercase; font-weight: 600; text-align: center;}
+        .table td { vertical-align: middle; font-size: 0.9rem; text-align: center;}
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 900px;">
+        <h3 class="text-center main-title">Catatan Pengeluaran</h3>
+        
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8">
+                <div class="card-custom">
+                    <div class="card-header-custom text-center">Total Uang Keluar</div>
+                    <div class="p-4 text-center">
+                        <h1 class="fw-bold text-danger mb-0">Rp {{ "{:,.0f}".format(total_pengeluaran).replace(',', '.') }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mb-5">
+            <button type="button" class="btn-action-danger w-100" style="max-width: 250px;" data-bs-toggle="modal" data-bs-target="#modalKeluar">
+                - CATAT PENGELUARAN
+            </button>
+            <a href="/" class="btn-outline-secondary-custom text-center text-decoration-none w-100" style="max-width: 250px;">
+                KEMBALI KE BERANDA
+            </a>
+        </div>
+
+        <div class="card-custom mb-4">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>Waktu</th><th>Oleh</th><th>Keperluan</th><th>Nominal</th><th>Bukti</th></tr></thead>
+                    <tbody>
+                        {% for row in data_pengeluaran %}
+                        <tr>
+                            <td class="text-muted" style="font-size: 0.75rem;">{{ row[4] }}</td>
+                            <td class="fw-semibold">{{ row[1] }}</td>
+                            <td class="text-start">{{ row[3] }}</td>
+                            <td class="fw-bold text-danger">- Rp {{ "{:,.0f}".format(row[2]).replace(',', '.') }}</td>
+                            <td>
+                                {% if row|length > 5 and row[5] %}
+                                <a href="{{ row[5] }}" target="_blank" class="badge bg-secondary text-decoration-none">Lihat</a>
+                                {% else %}
+                                <span class="text-muted" style="font-size: 0.7rem;">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-muted fst-italic py-4" style="font-size: 0.8rem;">Belum ada pengeluaran dicatat. Aman!</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalKeluar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-danger" style="font-size: 1rem;">Tarik Dana / Pengeluaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formUtama" action="/tambah_pengeluaran" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-semibold" style="font-size: 0.85rem;">Siapa yang narik dana?</label>
+                            <select id="inputNama" name="nama" class="form-select" required>
+                                <option value="" disabled selected>Pilih...</option>
+                                <option value="Ikhsan">Ikhsan</option>
+                                <option value="Febri">Febri</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-semibold" style="font-size: 0.85rem;">Nominal Keluar</label>
+                            <input type="text" id="jumlah_tampil" class="form-control" placeholder="Contoh: 150.000" required>
+                            <input type="hidden" name="jumlah_asli" id="jumlah_asli" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-semibold" style="font-size: 0.85rem;">Keperluan</label>
+                            <input type="text" name="keperluan" id="inputKeperluan" class="form-control" placeholder="Contoh: Beli kado / DP Gedung" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-semibold" style="font-size: 0.85rem;">Bukti Struk/Nota (Opsional)</label>
+                            <input type="file" id="inputFoto" class="form-control" accept="image/*">
+                        </div>
+                        
+                        <input type="hidden" name="pin_rahasia" id="pin_rahasia">
+                        
+                        <button type="button" id="btnLanjut" class="btn-action-danger w-100">LANJUTKAN</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const CLOUD_NAME = "dkldjve2t"; 
+        const UPLOAD_PRESET = "Nabung_preset"; 
+
+        const inputTampil = document.getElementById('jumlah_tampil');
+        const inputAsli = document.getElementById('jumlah_asli');
+        inputTampil.addEventListener('input', function(e) {
+            let val = this.value.replace(/[^0-9]/g, '');
+            inputAsli.value = val;
+            if(val) this.value = parseInt(val).toLocaleString('id-ID');
+            else this.value = '';
+        });
+
+        document.getElementById('btnLanjut').addEventListener('click', async function() {
+            const nama = document.getElementById('inputNama').value;
+            const nominal = inputAsli.value;
+            const keperluan = document.getElementById('inputKeperluan').value;
+            
+            if(!nama || !nominal || !keperluan) {
+                Swal.fire({icon: 'error', title: 'Data Kosong', text: 'Nama, Nominal, dan Keperluan wajib diisi!'});
+                return;
+            }
+
+            var myModalEl = document.getElementById('modalKeluar');
+            var modal = bootstrap.Modal.getInstance(myModalEl);
+            modal.hide();
+
+            const { value: pinUser } = await Swal.fire({
+                title: 'Otorisasi Pengeluaran',
+                text: 'Masukkan PIN ' + nama + ' untuk konfirmasi.',
+                input: 'password',
+                inputPlaceholder: '6 digit PIN',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonText: 'Batal'
+            });
+
+            if (pinUser) {
+                document.getElementById('pin_rahasia').value = pinUser;
+                const fileInput = document.getElementById('inputFoto');
+                
+                Swal.fire({
+                    title: 'Memproses Data...',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading() }
+                });
+
+                if (fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+                    formData.append('upload_preset', UPLOAD_PRESET);
+
+                    try {
+                        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                            method: 'POST', body: formData
+                        });
+                        const data = await response.json();
+                        if(data.secure_url) {
+                            const hiddenInput = document.createElement('input');
+                            hiddenInput.type = 'hidden';
+                            hiddenInput.name = 'foto_b64'; 
+                            hiddenInput.value = data.secure_url;
+                            document.getElementById('formUtama').appendChild(hiddenInput);
+                        }
+                    } catch (error) {
+                        Swal.fire('Error', 'Gagal upload foto', 'error');
+                        return;
+                    }
+                }
+                
+                document.getElementById('formUtama').submit();
+            }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('status') === 'sukses') {
+            Swal.fire({ icon: 'success', title: 'Pengeluaran Dicatat!', timer: 1500, showConfirmButton: false })
+            .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
+        } else if (urlParams.get('status') === 'pin_salah') {
+            Swal.fire({ icon: 'error', title: 'Ditolak!', text: 'PIN salah.', confirmButtonColor: '#e74c3c' })
+            .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
+        }
+    </script>
+</body>
+</html>
