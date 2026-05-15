@@ -10,22 +10,17 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; color: #2c3e50; padding-bottom: 50px; }
         .main-title { font-weight: 700; letter-spacing: 1px; color: #1a252f; text-transform: uppercase; margin-top: 40px; margin-bottom: 30px;}
-        
         .card-custom { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eef2f5; overflow: hidden;}
         .card-header-custom { background: #1a252f; color: white; padding: 15px 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.9rem;}
-        
         .flex-between { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f4f8; padding: 12px 0; }
         .flex-between:last-child { border-bottom: none; }
         .val-text { font-weight: 700; color: #2980b9; }
-        
         .progress-wrap { background: #e0e6ed; border-radius: 10px; height: 10px; margin-top: 20px; overflow: hidden; }
         .progress-fill { background: #2980b9; height: 100%; transition: width 1s ease; }
-        
         .btn-action { background: #2980b9; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; letter-spacing: 0.5px; transition: all 0.2s; box-shadow: 0 4px 6px rgba(41, 128, 185, 0.2); }
         .btn-action:hover { background: #2471a3; transform: translateY(-1px); }
-
-        .table th { background: #f8f9fa; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase; font-weight: 600; }
-        .table td { vertical-align: middle; font-size: 0.9rem; }
+        .table th { background: #f8f9fa; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase; font-weight: 600; text-align: center;}
+        .table td { vertical-align: middle; font-size: 0.9rem; text-align: center;}
     </style>
 </head>
 <body>
@@ -49,12 +44,10 @@
                             <span class="text-secondary" style="font-size: 0.9rem;">Terkumpul Febri</span>
                             <span class="val-text">Rp {{ "{:,.0f}".format(total_febri).replace(',', '.') }}</span>
                         </div>
-                        
                         <div class="progress-wrap">
                             <div class="progress-fill" style="width: {{ persentase }}%;"></div>
                         </div>
                         <div class="text-end text-muted mt-1" style="font-size: 0.75rem;">Progres: {{ "{:.1f}".format(persentase) }}%</div>
-
                         <div class="flex-between bg-light rounded px-3 py-2 mt-3 border">
                             <span class="fw-bold" style="font-size: 0.9rem;">Total Terkumpul</span>
                             <span class="fw-bold text-success" style="font-size: 1.1rem;">Rp {{ "{:,.0f}".format(total_semua).replace(',', '.') }}</span>
@@ -70,7 +63,7 @@
 
         <div class="text-center mb-5">
             <button type="button" class="btn-action w-100" style="max-width: 400px;" data-bs-toggle="modal" data-bs-target="#modalNabung">
-                + CATAT TABUNGAN BARU
+                CATAT TABUNGAN BARU
             </button>
         </div>
 
@@ -79,7 +72,7 @@
                 <div class="card-custom">
                     <div class="card-header-custom text-center">Ikhsan</div>
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 text-center">
+                        <table class="table table-hover mb-0">
                             <thead><tr><th>Waktu</th><th>Nominal</th><th>Bukti</th></tr></thead>
                             <tbody>
                                 {% for row in data_ikhsan %}
@@ -107,7 +100,7 @@
                 <div class="card-custom">
                     <div class="card-header-custom text-center">Febri</div>
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 text-center">
+                        <table class="table table-hover mb-0">
                             <thead><tr><th>Waktu</th><th>Nominal</th><th>Bukti</th></tr></thead>
                             <tbody>
                                 {% for row in data_febri %}
@@ -141,7 +134,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <form id="formUtama" action="/tambah" method="POST" enctype="multipart/form-data">
+                    <form id="formUtama" action="/tambah" method="POST">
                         <div class="mb-3">
                             <label class="form-label text-muted fw-semibold" style="font-size: 0.85rem;">Pilih Nama</label>
                             <select id="inputNama" name="nama" class="form-select" required>
@@ -157,11 +150,11 @@
                         </div>
                         <div class="mb-4">
                             <label class="form-label text-muted fw-semibold" style="font-size: 0.85rem;">Bukti Transfer (Opsional)</label>
-                            <input type="file" id="inputFoto" name="foto" class="form-control" accept="image/*">
-                            <small class="text-muted" style="font-size: 0.7rem;">Gambar otomatis dikompres agar upload cepat.</small>
+                            <input type="file" id="inputFoto" class="form-control" accept="image/*">
                         </div>
                         
                         <input type="hidden" name="pin_rahasia" id="pin_rahasia">
+                        <input type="hidden" name="foto_url" id="foto_url">
                         
                         <button type="button" id="btnLanjut" class="btn-action w-100">LANJUTKAN</button>
                     </form>
@@ -173,6 +166,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // --- KONFIGURASI CLOUDINARY (Udah Otomatis) ---
+        const CLOUD_NAME = "dkldjve2t"; 
+        const UPLOAD_PRESET = "Nabung_preset"; 
+        // ----------------------------------------------
+
         // Format Angka Ribuan
         const inputTampil = document.getElementById('jumlah_tampil');
         const inputAsli = document.getElementById('jumlah_asli');
@@ -183,63 +181,24 @@
             else this.value = '';
         });
 
-        // Fungsi Kompresi Gambar pakai Canvas (Biar upload gak lemot)
-        async function compressImage(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = event => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800; // Maksimal lebar gambar
-                        let width = img.width;
-                        let height = img.height;
-                        
-                        if (width > MAX_WIDTH) {
-                            height = height * (MAX_WIDTH / width);
-                            width = MAX_WIDTH;
-                        }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        ctx.canvas.toBlob((blob) => {
-                            const newFile = new File([blob], file.name, {
-                                type: 'image/jpeg',
-                                lastModified: Date.now()
-                            });
-                            resolve(newFile);
-                        }, 'image/jpeg', 0.6); // 0.6 adalah kualitas kompresi (lebih kecil ukurannya)
-                    }
-                }
-            });
-        }
-
-        // Logic Tombol Lanjut (Pop-up PIN)
         document.getElementById('btnLanjut').addEventListener('click', async function() {
             const nama = document.getElementById('inputNama').value;
             const nominal = inputAsli.value;
             
             if(!nama || !nominal) {
-                Swal.fire({icon: 'error', title: 'Data Belum Lengkap', text: 'Nama dan Nominal harus diisi!'});
+                Swal.fire({icon: 'error', title: 'Data Kosong', text: 'Nama dan Nominal harus diisi!'});
                 return;
             }
 
-            // Tutup Bootstrap Modal
             var myModalEl = document.getElementById('modalNabung');
             var modal = bootstrap.Modal.getInstance(myModalEl);
             modal.hide();
 
-            // Minta PIN lewat SweetAlert
             const { value: pinUser } = await Swal.fire({
-                title: 'Verifikasi Keamanan',
-                text: 'Masukkan PIN untuk ' + nama,
+                title: 'Keamanan',
+                text: 'Masukkan PIN milik ' + nama,
                 input: 'password',
-                inputPlaceholder: 'Masukkan 6 digit PIN',
+                inputPlaceholder: '6 digit PIN',
                 showCancelButton: true,
                 confirmButtonColor: '#2980b9',
                 confirmButtonText: 'Verifikasi & Simpan',
@@ -248,36 +207,40 @@
 
             if (pinUser) {
                 document.getElementById('pin_rahasia').value = pinUser;
+                const fileInput = document.getElementById('inputFoto');
                 
-                // Animasi Loading & Countdown 15 Detik
-                let timerInterval;
                 Swal.fire({
-                    title: 'Menyimpan Data',
-                    html: 'Mohon tunggu maksimal <b></b> detik.',
-                    timer: 15000, // 15 detik batas waktu tampilan
-                    timerProgressBar: true,
+                    title: 'Memproses Data...',
+                    text: fileInput.files.length > 0 ? 'Sedang mengirim bukti transfer, jangan tutup layar.' : 'Menyimpan catatan...',
                     allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                        const timer = Swal.getPopup().querySelector('b');
-                        timerInterval = setInterval(() => {
-                            timer.textContent = Math.ceil(Swal.getTimerLeft() / 1000);
-                        }, 100);
-                    },
-                    willClose: () => { clearInterval(timerInterval); }
+                    didOpen: () => { Swal.showLoading() }
                 });
 
-                // Proses Kompresi File Jika Ada
-                const fileInput = document.getElementById('inputFoto');
+                // PROSES DIRECT UPLOAD (BYPASS VERCEL)
                 if (fileInput.files.length > 0) {
-                    const compressedFile = await compressImage(fileInput.files[0]);
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(compressedFile);
-                    fileInput.files = dataTransfer.files;
-                }
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+                    formData.append('upload_preset', UPLOAD_PRESET);
 
-                // Kirim form ke server
-                HTMLFormElement.prototype.submit.call(document.getElementById('formUtama'));
+                    try {
+                        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        if(data.secure_url) {
+                            document.getElementById('foto_url').value = data.secure_url;
+                        } else {
+                            throw new Error('Upload gagal');
+                        }
+                    } catch (error) {
+                        Swal.fire('Error', 'Gagal upload foto ke server, pastikan koneksi internet stabil.', 'error');
+                        return;
+                    }
+                }
+                
+                // Submit Form
+                document.getElementById('formUtama').submit();
             }
         });
 
@@ -287,7 +250,7 @@
             Swal.fire({ icon: 'success', title: 'Tersimpan!', timer: 1500, showConfirmButton: false })
             .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
         } else if (urlParams.get('status') === 'pin_salah') {
-            Swal.fire({ icon: 'error', title: 'Ditolak!', text: 'PIN yang dimasukkan salah.', confirmButtonColor: '#e74c3c' })
+            Swal.fire({ icon: 'error', title: 'Ditolak!', text: 'PIN salah.', confirmButtonColor: '#e74c3c' })
             .then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
         } else if (urlParams.get('status') === 'reset_sukses') {
             Swal.fire({ icon: 'success', title: 'Database Bersih!', timer: 1500, showConfirmButton: false })
