@@ -10,14 +10,11 @@ app = Flask(__name__)
 DATABASE_URL = os.environ.get('DATABASE_URL')
 TARGET_TABUNGAN = 100000000
 
-# Pengaturan PIN Khusus
 PIN_AKUN = {
     "Ikhsan": "080907",
     "Febri": "756477"
 }
-
-# PIN Khusus untuk halaman Master Reset
-PIN_MASTER = "000000" # Ganti kalau lu mau, ini buat lu akses hapus semua data
+PIN_MASTER = "000000"
 
 cloudinary.config(
     cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
@@ -74,7 +71,6 @@ def tambah():
     nama = request.form.get('nama')
     pin_input = request.form.get('pin_rahasia')
     
-    # Validasi PIN per Akun
     if PIN_AKUN.get(nama) != pin_input:
         return redirect('/?status=pin_salah')
 
@@ -86,15 +82,17 @@ def tambah():
     tz = datetime.timezone(datetime.timedelta(hours=7))
     tanggal = datetime.datetime.now(tz).strftime("%d %b %Y - %H:%M WIB")
     
+    # Tangkap data Base64 dari HP
+    foto_b64 = request.form.get('foto_b64', '')
     foto_url = None
-    if 'foto' in request.files:
-        file = request.files['foto']
-        if file.filename != '':
-            try:
-                upload_result = cloudinary.uploader.upload(file)
-                foto_url = upload_result['secure_url']
-            except Exception as e:
-                print("Error upload:", e)
+
+    if foto_b64 != '':
+        try:
+            # Server upload Base64 langsung ke Cloudinary
+            upload_result = cloudinary.uploader.upload(foto_b64)
+            foto_url = upload_result['secure_url']
+        except Exception as e:
+            print("Error Cloudinary:", e)
 
     conn = psycopg2.connect(DATABASE_URL)
     c = conn.cursor()
